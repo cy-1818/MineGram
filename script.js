@@ -93,12 +93,18 @@ function makeTable(){
   for(var n=0;n<height;n++){
     var hTR = makeTR()
     var vhintTH = document.createElement('th')
-    vhintTH.height = "1em"
+    var vhintTxtNode = document.createElement('div')
+    vhintTxtNode.style.margin = "auto"
+    vhintTxtNode.style.height = "1.2em"
+    vhintTxtNode.style.display = "block"
+    vhintTxtNode.style.width = "fit-content"
+    vhintTxtNode.style.whiteSpace = "nowrap"
     if(n%2===0 || end){
-      vhintTH.innerText = vhint[n].join(" ")
+      vhintTxtNode.innerText = vhint[n].join(" ")
     }else{
-      vhintTH.innerText = "?"
+      vhintTxtNode.innerText = "?"
     }
+    vhintTH.append(vhintTxtNode)
     hTR.append(vhintTH)
     for(var m=0;m<width;m++){
       var vTH = document.createElement('th')
