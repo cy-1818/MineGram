@@ -14,8 +14,10 @@ var end = false
 var openNum
 var helpFlag = false
 var startTime
+var lastClearTime = null
 
 function start(){
+  lastClearTime = null
   startTime = Date.now()
   buttons.innerHTML = ""
   addSwitchButton()
@@ -108,6 +110,23 @@ function makeTable(){
     hTR.append(vhintTH)
     for(var m=0;m<width;m++){
       var vTH = document.createElement('th')
+      vTH.oncontextmenu = (function(j,k){
+        return (function(e){
+          e.preventDefault(); // ブラウザ標準の右クリックメニューをブロック
+          if(end) return;     // ゲーム終了後は操作無効
+          
+          if(board[j][k] === "n"){
+            board[j][k] = "p"; // 通常マスにフラグを立てる
+          }else if(board[j][k] === "b"){
+            board[j][k] = "c"; // 爆弾マスにフラグを立てる
+          }else if(board[j][k] === "p"){
+            board[j][k] = "n"; // フラグを外す
+          }else if(board[j][k] === "c"){
+            board[j][k] = "b"; // 爆弾マスのフラグを外す
+          }
+          makeTable(); // 盤面を更新
+        })
+      })(n,m)
       if(board[n][m] == "n"){
         vTH.onclick = (function(j,k){
           return (function(){
@@ -192,14 +211,18 @@ function makeTable(){
 function gameOver(){
   end = true
   alert("game over")
+  lastClearTime = null
   setup()
 }
 
 function clear(){
   end = true
   clearTime = (Date.now()-startTime)/1000
-  alert("game clear!!\nclear time : "+Math.floor(clearTime/60)+"m "+Math.floor(clearTime%60)+"s")
+  var m = Math.floor(clearTime/60)
+  var s = Math.floor(clearTime%60)
+  lastClearTime = { m: m, s: s, w: width, h: height }
   setup()
+  alert("game clear!!\nclear time : "+m+"m "+s+"s")
 }
 
 function isBomb(n, m){
@@ -255,6 +278,24 @@ Nonogram numbers are pointing <strong>not</strong> bomb squares.<br/>
   buttons.append(helpButton)
 }
 
+function getBoardEmoji(isClear) {
+  var emoji = "";
+  for(var n=0; n<height; n++) {
+    for(var m=0; m<width; m++) {
+      var c = board[n][m];
+      if (c === "p" || c === "c") {
+        emoji += "🚩";
+      } else if (c === "n" || c === "b") {
+        emoji += "⬛";
+      } else {
+        emoji += "⬜";
+      }
+    }
+    emoji += "\n";
+  }
+  return emoji;
+}
+
 function setup(){
   buttons.innerHTML = ""
   addSwitchButton()
@@ -292,6 +333,27 @@ function setup(){
   }
   buttons.append(startButton)
   addHelpButton()
+  if(lastClearTime != null){
+    var shareButton = document.createElement('a')
+    shareButton.innerText = "𝕏 Share"
+    shareButton.style.backgroundColor = "#000"
+    shareButton.style.color = "#fff"
+    shareButton.style.textDecoration = "none"; // リンクの下線を消す
+    shareButton.target = "_blank"; // 新しいタブで開く
+    shareButton.rel = "noopener noreferrer"; // セキュリティ対策
+
+    var text = "マインロジックをクリアしました！\n"
+             + "サイズ: " + lastClearTime.w + "×" + lastClearTime.h + "\n"
+             + "タイム: " + lastClearTime.m + "m " + lastClearTime.s + "s\n"
+             + getBoardEmoji(true)
+             + window.location.href
+             + "\n#マインロジック #MineGram"
+             
+    var url = "https://x.com/intent/tweet?text=" + encodeURIComponent(text);
+    
+    shareButton.href = url; // onclickではなくhrefに直接URLを指定する
+    buttons.append(shareButton)
+  }
 }
 
 setup()
