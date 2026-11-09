@@ -112,19 +112,19 @@ function makeTable(){
       var vTH = document.createElement('th')
       vTH.oncontextmenu = (function(j,k){
         return (function(e){
-          e.preventDefault(); // ブラウザ標準の右クリックメニューをブロック
-          if(end) return;     // ゲーム終了後は操作無効
+          e.preventDefault();
+          if(end) return;
           
           if(board[j][k] === "n"){
-            board[j][k] = "p"; // 通常マスにフラグを立てる
+            board[j][k] = "p";
           }else if(board[j][k] === "b"){
-            board[j][k] = "c"; // 爆弾マスにフラグを立てる
+            board[j][k] = "c";
           }else if(board[j][k] === "p"){
-            board[j][k] = "n"; // フラグを外す
+            board[j][k] = "n";
           }else if(board[j][k] === "c"){
-            board[j][k] = "b"; // 爆弾マスのフラグを外す
+            board[j][k] = "b";
           }
-          makeTable(); // 盤面を更新
+          makeTable();
         })
       })(n,m)
       if(board[n][m] == "n"){
@@ -132,9 +132,6 @@ function makeTable(){
           return (function(){
             if(open){
               openNum-=1
-              if(openNum === 0){
-                clear()
-              }
               if((j+k)%2===0){
                 board[j][k] = "o"
               }else{
@@ -148,6 +145,9 @@ function makeTable(){
                 num+=isBomb(j+1, k)
                 num+=isBomb(j+1, k+1)
                 board[j][k] = num
+              }
+              if(openNum === 0){
+                clear()
               }
             }else{
               board[j][k] = "p"
@@ -338,9 +338,9 @@ function setup(){
     shareButton.innerText = "𝕏 Share"
     shareButton.style.backgroundColor = "#000"
     shareButton.style.color = "#fff"
-    shareButton.style.textDecoration = "none"; // リンクの下線を消す
-    shareButton.target = "_blank"; // 新しいタブで開く
-    shareButton.rel = "noopener noreferrer"; // セキュリティ対策
+    shareButton.style.textDecoration = "none";
+    shareButton.target = "_blank";
+    shareButton.rel = "noopener noreferrer";
 
     var text = "マインロジックをクリアしました！\n"
              + "サイズ: " + lastClearTime.w + "×" + lastClearTime.h + "\n"
@@ -351,7 +351,7 @@ function setup(){
              
     var url = "https://x.com/intent/tweet?text=" + encodeURIComponent(text);
     
-    shareButton.href = url; // onclickではなくhrefに直接URLを指定する
+    shareButton.href = url;
     buttons.append(shareButton)
   }
 }
