@@ -353,6 +353,10 @@ function setup(){
     
     shareButton.href = url;
     buttons.append(shareButton)
+    var arrow = document.createElement('span')
+    arrow.innerText = "← 𝕏で結果を共有！！！！"
+    arrow.style.color = "#ff0000"
+    buttons.append(arrow)
   }
 }
 
